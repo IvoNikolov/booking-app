@@ -1,6 +1,6 @@
 <ion-header>
     <ion-toolbar>
-        <ion-title>Offer</ion-title>
+        <ion-title>{{place.title}}</ion-title>
         <ion-buttons slot="start">
           <ion-back-button defaultHref="/places/tabs/offers"></ion-back-button>
         </ion-buttons>
@@ -8,5 +8,5 @@
 </ion-header>
 
 <ion-content>
-
+    <ion-button color="primary" class="ionc-margin" [routerLink]="['/places/tabs/offers/edit', place.id]">Edit</ion-button>
 </ion-content>

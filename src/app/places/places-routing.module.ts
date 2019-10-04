@@ -11,7 +11,7 @@ const routes: Routes = [
                 path: '', loadChildren: './discover/discover.module#DiscoverPageModule'
             },
             {
-                path: ':placeId', loadChildren: './discover/discover.module#DiscoverPageModule'
+                path: ':placeId', loadChildren: './discover/place-detail/place-detail.module#PlaceDetailPageModule'
             },
             {
                 path: 'place-detail', loadChildren: './discover/place-detail/place-detail.module#PlaceDetailPageModule'

@@ -16,8 +16,9 @@ export class OffersPage implements OnInit {
     this.offers = this.placeService.places;
   }
 
-  onSelectOffer(offerId) {
-    
+
+  onEdit(offerId) {
+    console.log(offerId);
   }
 
 }

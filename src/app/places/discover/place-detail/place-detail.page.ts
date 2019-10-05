@@ -31,9 +31,19 @@ export class PlaceDetailPage implements OnInit {
   }
 
   onBookPlace() {
-    this.modalCtrl.create({component: CreateBookingComponent, }).then(modalEl => {
-      modalEl.present();
-    });
-    // this.navCtrl.navigateBack('/places/tabs/discover');
+    this.modalCtrl
+      .create({
+        component: CreateBookingComponent,
+        componentProps: { selectedPlace: this.place }
+      })
+      .then(modalEl => {
+        modalEl.present();
+        return modalEl.onDidDismiss();
+      })
+      .then(resultData => {
+        if (resultData.role === 'confirm') {
+          console.log('Booked!');
+        }
+      });
   }
 }

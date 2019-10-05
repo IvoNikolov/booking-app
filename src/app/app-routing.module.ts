@@ -1,12 +1,13 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { AuthGuard } from './auth/auth.guard';
 
 const routes: Routes = [
   { path: '', redirectTo: 'places', pathMatch: 'full' },
   { path: 'home', loadChildren: () => import('./home/home.module').then( m => m.HomePageModule)},
   { path: 'auth', loadChildren: './auth/auth.module#AuthPageModule' },
-  { path: 'places', loadChildren: './places/places.module#PlacesPageModule' },
-  { path: 'bookings', loadChildren: './bookings/bookings.module#BookingsPageModule' },
+  { path: 'places', loadChildren: './places/places.module#PlacesPageModule', canLoad: [AuthGuard] },
+  { path: 'bookings', loadChildren: './bookings/bookings.module#BookingsPageModule', canLoad: [AuthGuard] },
   // { path: 'discover', loadChildren: './places/discover/discover.module#DiscoverPageModule' },
   // { path: 'offers', loadChildren: './places/offers/offers.module#OffersPageModule' },
   // { path: 'new-offer', loadChildren: './places/offers/new-offer/new-offer.module#NewOfferPageModule' },

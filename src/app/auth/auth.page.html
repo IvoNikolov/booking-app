@@ -5,5 +5,14 @@
 </ion-header>
 
 <ion-content>
-    <ion-button color="primary" class="ionc-margin" (click)="onLogin()">Login</ion-button>
+  <ion-list>
+    <ion-item>
+      <ion-label position="floating">E-mail</ion-label>
+      <ion-input></ion-input>
+    </ion-item>
+  </ion-list>
+  <div class="ion-text-center">
+      <ion-spinner color="primary" *ngIf="isLoading"></ion-spinner>
+  </div>
+    <ion-button color="primary" class="ionc-margin" (click)="onLogin()" *ngIf="!isLoading">Login</ion-button>
 </ion-content>

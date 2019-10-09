@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController, ModalController } from '@ionic/angular';
+import { NavController, ModalController, ActionSheetController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { PlacesService } from '../../places.service';
 import { Place } from '../../places.model';
@@ -15,7 +15,8 @@ export class PlaceDetailPage implements OnInit {
     private route: ActivatedRoute,
     private navCtrl: NavController,
     private placeService: PlacesService,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private actionSheetCtrl: ActionSheetController
   ) {}
   place: Place;
 
@@ -31,19 +32,45 @@ export class PlaceDetailPage implements OnInit {
   }
 
   onBookPlace() {
-    this.modalCtrl
-      .create({
-        component: CreateBookingComponent,
-        componentProps: { selectedPlace: this.place }
-      })
-      .then(modalEl => {
-        modalEl.present();
-        return modalEl.onDidDismiss();
-      })
-      .then(resultData => {
-        if (resultData.role === 'confirm') {
-          console.log('Booked!');
+    this.actionSheetCtrl.create({
+      header: 'Choose an action',
+      buttons: [
+        {
+          text: 'Select Date',
+          handler: () => {
+            this.openBookingModal('select');
+          }
+        },
+        {
+          text: 'Random Date',
+          handler: () => {
+            this.openBookingModal('random');
+          }
+        },
+        {
+            text: 'Cancel',
+            role: 'cancel'
         }
-      });
+      ]
+    }).then(actionEl => {
+      actionEl.present();
+    });
+  }
+
+  openBookingModal(mode: 'select' | 'random') {
+    this.modalCtrl
+    .create({
+      component: CreateBookingComponent,
+      componentProps: { selectedPlace: this.place }
+    })
+    .then(modalEl => {
+      modalEl.present();
+      return modalEl.onDidDismiss();
+    })
+    .then(resultData => {
+      if (resultData.role === 'confirm') {
+        console.log('Booked!');
+      }
+    });
   }
 }

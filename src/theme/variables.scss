@@ -74,4 +74,13 @@
   --ion-color-light-contrast-rgb: 0, 0, 0;
   --ion-color-light-shade: #d7d8da;
   --ion-color-light-tint: #f5f6f9;
+
+  --ion-toolbar-background: var(--ion-color-primary, red);
+  --ion-toolbar-color: var(--ion-color-primary-contrast, red);
+
+}
+
+ion-button {
+  --background: green;
+  --box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.6);
 }

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from './auth.service';
 import { Router } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-auth',
@@ -24,6 +25,10 @@ export class AuthPage implements OnInit {
         loadingEl.dismiss();
       }, 2000);
     });
+  }
+
+  onSubmit(form: NgForm) {
+      
   }
 
 }

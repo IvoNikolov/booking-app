@@ -5,22 +5,34 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <ion-grid>
-    <ion-row>
-      <ion-col size-md="6" offset-md="3">
-          <ion-list>
-              <ion-item>
-                <ion-label position="floating">E-mail</ion-label>
-                <ion-input type="email"></ion-input>
-              </ion-item>
-              <ion-item>
-                <ion-label position="floating">Password</ion-label>
-                <ion-input type="password"></ion-input>
-              </ion-item>
-            </ion-list>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
-  <ion-button fill="clear" expand="full" (click)="onLogin()" *ngIf="!isLoading">Switch to Login</ion-button>
-  <ion-button expand="full" (click)="onLogin()" *ngIf="!isLoading">Login</ion-button>
+  <form #f="ngForm" (ngSubmit)="onSubmit(f)">
+    <ion-grid>
+      <ion-row>
+        <ion-col size-sm="6" offset-sm="3">
+            <ion-list>
+                <ion-item>
+                  <ion-label position="floating">E-mail</ion-label>
+                  <ion-input type="email" ngModel name="email" required email #emailCtrl="ngModel"></ion-input>
+                </ion-item>
+                <ion-item *ngIf="!emailCtrl.valid && emailCtrl.touched" lines="none">
+                    <ion-label>Should be a valid email!</ion-label>
+                </ion-item>
+                <ion-item>
+                  <ion-label position="floating">Password</ion-label>
+                  <ion-input type="password"  ngModel name="password" minlength="6" required #passwordCtrl="ngModel"></ion-input>
+                </ion-item>
+                <ion-item *ngIf="!passwordCtrl.valid && passwordCtrl.touched" lines="none">
+                    <ion-label>Should be a valid password!</ion-label>
+                </ion-item>
+              </ion-list>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+          <ion-col size-sm="6" offset-sm="3">
+              <ion-button type="button" fill="clear" expand="full" (click)="onLogin()" *ngIf="!isLoading">Switch to Login</ion-button>
+              <ion-button type="submit" expand="full" (click)="onLogin()" *ngIf="!isLoading" [disabled]="!f.valid">Login</ion-button>
+          </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
 </ion-content>

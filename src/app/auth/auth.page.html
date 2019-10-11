@@ -4,15 +4,23 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ion-list>
-    <ion-item>
-      <ion-label position="floating">E-mail</ion-label>
-      <ion-input></ion-input>
-    </ion-item>
-  </ion-list>
-  <!-- <div class="ion-text-center">
-      <ion-spinner color="primary" *ngIf="isLoading"></ion-spinner>
-  </div> -->
-    <ion-button class="ionc-margin" (click)="onLogin()" *ngIf="!isLoading">Login</ion-button>
+<ion-content class="ion-padding">
+  <ion-grid>
+    <ion-row>
+      <ion-col size-md="6" offset-md="3">
+          <ion-list>
+              <ion-item>
+                <ion-label position="floating">E-mail</ion-label>
+                <ion-input type="email"></ion-input>
+              </ion-item>
+              <ion-item>
+                <ion-label position="floating">Password</ion-label>
+                <ion-input type="password"></ion-input>
+              </ion-item>
+            </ion-list>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-button fill="clear" expand="full" (click)="onLogin()" *ngIf="!isLoading">Switch to Login</ion-button>
+  <ion-button expand="full" (click)="onLogin()" *ngIf="!isLoading">Login</ion-button>
 </ion-content>

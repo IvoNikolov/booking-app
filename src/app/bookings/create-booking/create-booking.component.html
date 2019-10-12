@@ -10,7 +10,38 @@
   </ion-header>
   
   <ion-content class="ion-text-center ion-padding">
-    <p>{{ selectedPlace.description }}</p>
-    <ion-button class="primary" (click)="onBookPlace()"> Book</ion-button>
+    <form>
+      <ion-grid>
+          <ion-row>
+            <ion-col size-md="6" offset-md="3">
+              <ion-item>
+                <ion-label position="floating">First Name</ion-label>
+                <ion-input type="text" ngModel name="first-name" required></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size-md="6" offset-md="3">
+              <ion-item>
+                <ion-label position="floating">Last Name</ion-label>
+                <ion-input type="text" ngModel name="last-name" required></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size-md="6" offset-md="3">
+              <ion-item>
+                <ion-label position="floating">Number of Guests</ion-label>
+                <ion-select type="text" ngModel="2" name="guest-number" required>
+                  <ion-select-option value="1">1</ion-select-option>
+                  <ion-select-option value="2">2</ion-select-option>
+                  <ion-select-option value="2">3</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-grid>    
+        <ion-button class="primary" (click)="onBookPlace()">Book</ion-button>
+      </form>
   </ion-content>
   

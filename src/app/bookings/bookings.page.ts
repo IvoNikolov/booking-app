@@ -22,8 +22,9 @@ export class BookingsPage implements OnInit, OnDestroy {
     });
   }
 
-  onCancelBooking(offerId: string, slidingEl: IonItemSliding) {
+  onCancelBooking(bookingId: string, slidingEl: IonItemSliding) {
     slidingEl.close();
+    this.bookingService.cancelBooking(bookingId).subscribe();
   }
 
   ngOnDestroy() {

@@ -76,7 +76,6 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
       return modalEl.onDidDismiss();
     })
     .then(resultData => {
-      console.log(resultData);
       const data = resultData.data.bookingDate;
       if (resultData.role === 'confirm') {
 
@@ -92,9 +91,6 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
             data.startDate,
             data.endDate
           ).subscribe(() => {
-            this.bookingService.bookings.subscribe(value => {
-              console.log(value);
-            });
             loadingEl.dismiss();
           });
         });

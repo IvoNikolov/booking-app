@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Place } from '../../places.model';
-import { ActivatedRoute } from '@angular/router';
-import { NavController } from '@ionic/angular';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NavController, LoadingController } from '@ionic/angular';
 import { PlacesService } from '../../places.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
@@ -20,7 +20,9 @@ export class EditOfferPage implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private navCtrl: NavController,
-    private placeService: PlacesService
+    private placeService: PlacesService,
+    private router: Router,
+    private loadingCtrl: LoadingController
   ) {}
 
   ngOnInit() {
@@ -38,18 +40,25 @@ export class EditOfferPage implements OnInit, OnDestroy {
             this.place.title, {updateOn: 'blur', validators: [Validators.required]}),
           description: new FormControl(
             this.place.description, {updateOn: 'blur', validators: [Validators.required, Validators.maxLength(180)]}),
-          price: new FormControl(this.place.price, {updateOn: 'blur', validators: [Validators.required, Validators.min(1)]}),
-          dateFrom: new FormControl(null, {updateOn: 'blur', validators: [Validators.required]}),
-          dateTo: new FormControl(null, {updateOn: 'blur', validators: [Validators.required]}),
         });
       });
     });
   }
 
-  onEditOffer() {
+  onUpdateOffer() {
     if (!this.form.valid) {
       return;
     }
+
+    this.loadingCtrl.create({message: 'Updating place place...'}).then(loadingEl => {
+      loadingEl.present();
+      this.placeService.updatePlace(this.place.id, this.form.value.title, this.form.value.description).subscribe(() => {
+        loadingEl.dismiss();
+        this.form.reset();
+        this.router.navigate(['/places/tabs/offers']);
+      });
+    });
+
   }
 
   ngOnDestroy() {

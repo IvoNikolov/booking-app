@@ -5,7 +5,7 @@
           <ion-back-button [defaultHref]="'/places/tabs/offers/' + place.id"></ion-back-button>
         </ion-buttons>
         <ion-buttons slot="primary">
-          <ion-button (click)="onEditOffer()" [disabled]="!form.valid">
+          <ion-button (click)="onUpdateOffer()" [disabled]="!form.valid">
             <ion-icon name="checkmark" slot="icon-only"></ion-icon>
           </ion-button>
         </ion-buttons>

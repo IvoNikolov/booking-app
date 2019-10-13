@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Place } from './places.model';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +16,7 @@ export class PlacesService {
       40.00,
       new Date('2020-01-01'),
       new Date('2020-12-31'),
+      'abc'
     ),
     new Place(
       'p2',
@@ -24,6 +26,7 @@ export class PlacesService {
       20.00,
       new Date('2020-01-01'),
       new Date('2020-12-31'),
+      'abc'
     ),
     new Place(
       'p3',
@@ -33,6 +36,7 @@ export class PlacesService {
       30.00,
       new Date('2020-01-01'),
       new Date('2020-12-31'),
+      'abc'
     )
   ];
 
@@ -40,11 +44,26 @@ export class PlacesService {
     return [...this._places];
   }
 
-  constructor() { }
+  constructor(private authService: AuthService) { }
 
   getPlace(id: string) {
     return { ...this._places.find(place =>
       place.id === id
     )};
+  }
+
+  addPlace(title: string, description: string, price: number, dateFrom: Date, dateTo: Date) {
+    const newPlace = new Place(
+        'p' + Math.floor(Math.random() * 110).toString(),
+        title,
+        description,
+        'https://www.freeiconspng.com/uploads/no-image-icon-11.PNG',
+        price,
+        dateFrom,
+        dateTo,
+        this.authService.userId
+      );
+    this._places.push(newPlace);
+    console.log(this._places);
   }
 }

@@ -15,6 +15,9 @@ export class OffersPage implements OnInit {
   constructor(private placeService: PlacesService, private router: Router) { }
 
   ngOnInit() {
+  }
+
+  ionViewDidEnter() {
     this.offers = this.placeService.places;
   }
 

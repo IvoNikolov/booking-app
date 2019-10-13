@@ -6,6 +6,7 @@ import { Place } from '../../places.model';
 import { CreateBookingComponent } from 'src/app/bookings/create-booking/create-booking.component';
 import { Subscription } from 'rxjs';
 import { BookingsService } from 'src/app/bookings/bookings.service';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-place-detail',
@@ -20,11 +21,12 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
     private modalCtrl: ModalController,
     private actionSheetCtrl: ActionSheetController,
     private bookingService: BookingsService,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private authService: AuthService
   ) {}
   place: Place;
+  isBookable = false;
   private placesSub: Subscription;
-
 
   ngOnInit() {
     this.route.paramMap.subscribe(paramMap => {
@@ -35,6 +37,7 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
       const placeId = paramMap.get('placeId');
       this.placesSub = this.placeService.getPlace(placeId).subscribe(place => {
         this.place = place;
+        this.isBookable = place.userId !== this.authService.userId;
       });
     });
   }

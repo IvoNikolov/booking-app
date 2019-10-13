@@ -19,8 +19,8 @@ export class NewOfferPage implements OnInit {
       title: new FormControl(null, {updateOn: 'blur', validators: [Validators.required]}),
       description: new FormControl(null, {updateOn: 'blur', validators: [Validators.required, Validators.maxLength(180)]}),
       price: new FormControl(null, {updateOn: 'blur', validators: [Validators.required, Validators.min(1)]}),
-      dateFrom: new FormControl(null, {updateOn: 'blur', validators: [Validators.required]}),
-      dateTo: new FormControl(null, {updateOn: 'blur', validators: [Validators.required]}),
+      availableFrom: new FormControl(null, {updateOn: 'blur', validators: [Validators.required]}),
+      availableTo: new FormControl(null, {updateOn: 'blur', validators: [Validators.required]}),
     });
   }
 
@@ -35,8 +35,8 @@ export class NewOfferPage implements OnInit {
         this.form.value.title,
         this.form.value.description,
         +this.form.value.price,
-        new Date(this.form.value.dateFrom),
-        new Date(this.form.value.dateTo)
+        new Date(this.form.value.availableFrom),
+        new Date(this.form.value.availableTo)
       ).subscribe(() => {
         loadingEl.dismiss();
         this.form.reset();

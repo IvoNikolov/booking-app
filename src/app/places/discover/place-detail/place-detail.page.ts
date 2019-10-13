@@ -1,10 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { NavController, ModalController, ActionSheetController } from '@ionic/angular';
+import { NavController, ModalController, ActionSheetController, LoadingController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { PlacesService } from '../../places.service';
 import { Place } from '../../places.model';
 import { CreateBookingComponent } from 'src/app/bookings/create-booking/create-booking.component';
 import { Subscription } from 'rxjs';
+import { BookingsService } from 'src/app/bookings/bookings.service';
 
 @Component({
   selector: 'app-place-detail',
@@ -17,7 +18,9 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
     private navCtrl: NavController,
     private placeService: PlacesService,
     private modalCtrl: ModalController,
-    private actionSheetCtrl: ActionSheetController
+    private actionSheetCtrl: ActionSheetController,
+    private bookingService: BookingsService,
+    private loadingCtrl: LoadingController
   ) {}
   place: Place;
   private placesSub: Subscription;
@@ -66,15 +69,35 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
     this.modalCtrl
     .create({
       component: CreateBookingComponent,
-      componentProps: { selectedPlace: this.place, type: mode }
+      componentProps: { selectedPlace: this.place, selectedMode: mode }
     })
     .then(modalEl => {
       modalEl.present();
       return modalEl.onDidDismiss();
     })
     .then(resultData => {
+      console.log(resultData);
+      const data = resultData.data.bookingDate;
       if (resultData.role === 'confirm') {
-        console.log('Booked!');
+
+        this.loadingCtrl.create({message: 'Booking place...'}).then(loadingEl => {
+          loadingEl.present();
+          this.bookingService.addBooking(
+            this.place.id,
+            this.place.title,
+            this.place.imageUrl,
+            data.firstName,
+            data.lastName,
+            data.guestNumber,
+            data.startDate,
+            data.endDate
+          ).subscribe(() => {
+            this.bookingService.bookings.subscribe(value => {
+              console.log(value);
+            });
+            loadingEl.dismiss();
+          });
+        });
       }
     });
   }

@@ -6,32 +6,37 @@ import { NgForm } from '@angular/forms';
 @Component({
   selector: 'app-create-booking',
   templateUrl: './create-booking.component.html',
-  styleUrls: ['./create-booking.component.scss'],
+  styleUrls: ['./create-booking.component.scss']
 })
 export class CreateBookingComponent implements OnInit {
-
   @Input() selectedPlace: Place;
   @Input() selectedMode: 'select' | 'random';
-  @ViewChild('f', {static: false}) form: NgForm;
+  @ViewChild('f', { static: true }) form: NgForm;
   startDate: string;
   endDate: string;
 
-  constructor(private modalCtrl: ModalController) { }
+  constructor(private modalCtrl: ModalController) {}
 
   ngOnInit() {
-    const availableFrom = new Date(this.selectedPlace.dateFrom);
-    const availableTo = new Date(this.selectedPlace.dateTo);
+
+    const availableFrom = new Date(this.selectedPlace.availableFrom);
+    const availableTo = new Date(this.selectedPlace.availableTo);
     if (this.selectedMode === 'random') {
       this.startDate = new Date(
-        availableFrom.getDate()
-        + Math.random() * (availableTo.getDate()
-        - 7 * 24 * 60 * 60 * 1000
-        - availableFrom.getDate())).toISOString();
-      this.endDate = new Date(new Date(
-        this.startDate).getTime()
-        + Math.random() * (new Date(this.startDate).getTime()
-        + 6 * 24 * 60 * 60 * 1000
-        - new Date(this.startDate).getTime())).toISOString();
+        availableFrom.getTime() +
+          Math.random() *
+            (availableTo.getTime() -
+              7 * 24 * 60 * 60 * 1000 -
+              availableFrom.getTime())
+      ).toISOString();
+
+      this.endDate = new Date(
+        new Date(this.startDate).getTime() +
+          Math.random() *
+            (new Date(this.startDate).getTime() +
+              6 * 24 * 60 * 60 * 1000 -
+              new Date(this.startDate).getTime())
+      ).toISOString();
     }
   }
 
@@ -39,13 +44,18 @@ export class CreateBookingComponent implements OnInit {
     if (!this.form.valid || !this.datesValid()) {
       return;
     }
-    this.modalCtrl.dismiss({ bookingDate: {
-      firstName: this.form.valid['first-name'],
-      lastName: this.form.valid['last-name'],
-      guestNumber: this.form.valid['guest-number'],
-      dateFrom: this.form.valid['date-from'],
-      dateTo: this.form.valid['date-to'],
-    } }, 'confirm');
+    this.modalCtrl.dismiss(
+      {
+        bookingDate: {
+          firstName: this.form.value['first-name'],
+          lastName: this.form.value['last-name'],
+          guestNumber: +this.form.value['guest-number'],
+          startDate: new Date(this.form.value['date-from']),
+          endDate: new Date(this.form.value['date-to'])
+        }
+      },
+      'confirm'
+    );
   }
 
   onCancel() {
@@ -57,5 +67,4 @@ export class CreateBookingComponent implements OnInit {
     const endDate = new Date(this.form.value['date-to']);
     return endDate > startDate;
   }
-
 }

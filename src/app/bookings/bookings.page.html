@@ -13,7 +13,7 @@
       <ion-col size-md="6" offset-md="3">
           <ion-list>
               <ion-item-sliding *ngFor="let booking of loadedBookings" #slidingItem>
-                <ion-item  [routerLink] = "['/places/tabs/bookings', booking.id]" detail>
+                <ion-item>
                   <ion-label> 
                     <h5>{{ booking.placeTitle }}</h5>
                     <p>Guest: {{ booking.guestNumber }}</p>

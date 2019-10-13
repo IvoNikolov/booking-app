@@ -32,7 +32,7 @@
             <ion-col size-md="6" offset-md="3">
               <ion-item>
                 <ion-label position="floating">Number of Guests</ion-label>
-                <ion-select type="text" ngModel="2" name="guest-number" required>
+                <ion-select type="text" [ngModel]="'2'" name="guest-number" required>
                   <ion-select-option value="1">1</ion-select-option>
                   <ion-select-option value="2">2</ion-select-option>
                   <ion-select-option value="2">3</ion-select-option>
@@ -47,8 +47,8 @@
                         <ion-datetime
                           display-format="MMM DD YYYY"
                           picker-format="YY MMM DD"
-                          [min]="selectedPlace.dateFrom.toISOString()"
-                          [max]="selectedPlace.dateTo.toISOString()"
+                          [min]="selectedPlace.availableFrom.toISOString()"
+                          [max]="selectedPlace.availableTo.toISOString()"
                           [(ngModel)]="startDate"
                           name="date-from"
                           required 
@@ -62,7 +62,7 @@
                     display-format="MMM DD YYYY"
                     picker-format="YY MMM DD"
                     [min]="startDateCtrl.value"
-                    [max]="selectedPlace.dateTo.toISOString()"
+                    [max]="selectedPlace.availableTo.toISOString()"
                     [(ngModel)]="endDate"
                     name="date-to"
                     required></ion-datetime>

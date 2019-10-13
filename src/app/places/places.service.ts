@@ -56,15 +56,15 @@ export class PlacesService {
     }));
   }
 
-  addPlace(title: string, description: string, price: number, dateFrom: Date, dateTo: Date) {
+  addPlace(title: string, description: string, price: number, availableFrom: Date, availableTo: Date) {
     const newPlace = new Place(
         'p' + Math.floor(Math.random() * 110).toString(),
         title,
         description,
         'https://www.freeiconspng.com/uploads/no-image-icon-11.PNG',
         price,
-        dateFrom,
-        dateTo,
+        availableFrom,
+        availableTo,
         this.authService.userId
       );
     return this.places.pipe(take(1), delay(2000), tap(places => {
@@ -82,8 +82,8 @@ export class PlacesService {
         description,
         oldPlace.imageUrl,
         oldPlace.price,
-        oldPlace.dateFrom,
-        oldPlace.dateTo,
+        oldPlace.availableFrom,
+        oldPlace.availableTo,
         ''
       );
       this._places.next(updatedPlaces);

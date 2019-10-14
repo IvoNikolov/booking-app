@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Place } from './places.model';
 import { AuthService } from '../auth/auth.service';
 import { BehaviorSubject } from 'rxjs';
-import { take, map, tap, delay } from 'rxjs/operators';
+import { take, map, tap, delay, switchMap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({
@@ -58,6 +58,7 @@ export class PlacesService {
   }
 
   addPlace(title: string, description: string, price: number, availableFrom: Date, availableTo: Date) {
+    let generatedId: string;
     const newPlace = new Place(
         'p' + Math.floor(Math.random() * 110).toString(),
         title,
@@ -68,11 +69,20 @@ export class PlacesService {
         availableTo,
         this.authService.userId
       );
+
     return this.http
-      .post('https://ionic-booking-app-b44d7.firebaseio.com/offered-places.json', { ...newPlace, id: null })
-      .pipe(take(1), delay(2000), tap(resData => {
-        console.log(resData);
-    }));
+      .post<{name: string}>('https://ionic-booking-app-b44d7.firebaseio.com/offered-places.json', { ...newPlace, id: null })
+      .pipe(
+        switchMap(resData => {
+          generatedId = resData.name;
+          return this.places;
+        }),
+        take(1),
+        tap(places => {
+          newPlace.id = generatedId;
+          this._places.next(places.concat(newPlace));
+        })
+      );
 
     // return this.places.pipe(take(1), delay(2000), tap(places => {
     //     this._places.next(places.concat(newPlace));

@@ -122,20 +122,32 @@ export class PlacesService {
   }
 
   updatePlace(placeId: string, title: string, description: string) {
-    return this.places.pipe(take(1), delay(2000), tap(places => {
-      const updatedPlaceIndex = places.findIndex(pl => pl.id === placeId);
-      const updatedPlaces = [...places];
-      const oldPlace = updatedPlaces[updatedPlaceIndex];
-      updatedPlaces[updatedPlaceIndex] = new Place(oldPlace.id,
-        title,
-        description,
-        oldPlace.imageUrl,
-        oldPlace.price,
-        oldPlace.availableFrom,
-        oldPlace.availableTo,
-        ''
-      );
-      this._places.next(updatedPlaces);
-    }));
+
+    let updatedPlaces: Place[];
+
+    return this.places
+    .pipe(
+      take(1),
+      switchMap(places => {
+        const updatedPlaceIndex = places.findIndex(pl => pl.id === placeId);
+        updatedPlaces = [...places];
+        const oldPlace = updatedPlaces[updatedPlaceIndex];
+        updatedPlaces[updatedPlaceIndex] = new Place(oldPlace.id,
+          title,
+          description,
+          oldPlace.imageUrl,
+          oldPlace.price,
+          oldPlace.availableFrom,
+          oldPlace.availableTo,
+          ''
+        );
+        return this.http
+          .put(`https://ionic-booking-app-b44d7.firebaseio.com/offered-places/${placeId}.json`,
+            {...updatedPlaces[updatedPlaceIndex], id: null}
+          );
+      }), tap(() => {
+          this._places.next(updatedPlaces);
+      })
+    );
   }
 }

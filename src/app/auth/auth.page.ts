@@ -13,14 +13,14 @@ export class AuthPage implements OnInit {
 
   isLogin = true;
 
-  constructor(private authService: AuthService, private router: Router, private laoderCtrl: LoadingController) { }
+  constructor(private authService: AuthService, private router: Router, private loaderCtrl: LoadingController) { }
 
   ngOnInit() {
   }
 
   onLogin() {
     this.authService.login();
-    this.laoderCtrl.create({keyboardClose: true, message: 'Logging in...'}).then(loadingEl => {
+    this.loaderCtrl.create({keyboardClose: true, message: 'Logging in...'}).then(loadingEl => {
       loadingEl.present();
       setTimeout(() => {
         this.router.navigateByUrl('/places/tabs/discover');

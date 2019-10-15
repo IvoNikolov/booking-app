@@ -8,6 +8,5 @@ export class Place {
         public availableFrom: Date,
         public availableTo: Date,
         public userId: string,
-        
     ) {}
 }

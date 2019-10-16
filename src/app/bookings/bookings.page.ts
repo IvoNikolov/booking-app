@@ -12,6 +12,7 @@ import { Subscription } from 'rxjs';
 export class BookingsPage implements OnInit, OnDestroy {
 
   loadedBookings: Bookings[];
+  isLoading = false;
   private bookingsSub: Subscription;
 
   constructor(private bookingService: BookingsService, private loadingCtrl: LoadingController) { }
@@ -19,6 +20,13 @@ export class BookingsPage implements OnInit, OnDestroy {
   ngOnInit() {
     this.bookingsSub = this.bookingService.bookings.subscribe(bookings => {
       this.loadedBookings = bookings;
+    });
+  }
+
+  ionViewWillEnter() {
+    this.isLoading = true;
+    this.bookingService.fetchBooking().subscribe(() => {
+      this.isLoading = false;
     });
   }
 

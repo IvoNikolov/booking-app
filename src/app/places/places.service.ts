@@ -14,6 +14,7 @@ interface PlaceData {
   title: string;
   userId: string;
 }
+
 @Injectable({
   providedIn: 'root'
 })

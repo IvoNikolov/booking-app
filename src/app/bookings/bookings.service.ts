@@ -5,6 +5,18 @@ import { AuthService } from '../auth/auth.service';
 import { take, map, tap, delay, switchMap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 
+interface BookingData {
+  bookedFrom: string;
+  bookedTo: string;
+  firstName: string;
+  guestNumber: number;
+  lastName: string;
+  placeId: string;
+  placeImage: string;
+  placeTitle: string;
+  userId: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -61,5 +73,39 @@ export class BookingsService {
     return this._bookings.pipe(take(1), delay(2000), tap(bookings => {
       this._bookings.next(bookings.filter(b => b.id !== bookingId));
     }));
+  }
+
+  fetchBooking() {
+    return this.http
+    .get<{[key: string]: BookingData}>(
+      `https://ionic-booking-app-b44d7.firebaseio.com/bookings.json?orderBy="userId"&equalTo="${
+        this.authService.userId
+      }"`
+    )
+    .pipe(
+      map(bookingData => {
+        const bookings = [];
+        for (const key in bookingData) {
+          if (bookingData.hasOwnProperty(key)) {
+            bookings.push(new Bookings(
+              key,
+              bookingData[key].placeId,
+              bookingData[key].userId,
+              bookingData[key].placeTitle,
+              bookingData[key].placeImage,
+              bookingData[key].firstName,
+              bookingData[key].lastName,
+              bookingData[key].guestNumber,
+              new Date(bookingData[key].bookedFrom),
+              new Date(bookingData[key].bookedTo)
+            ));
+          }
+        }
+        return bookings;
+      }),
+      tap(bookings => {
+        this._bookings.next(bookings);
+      })
+    );
   }
 }

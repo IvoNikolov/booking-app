@@ -70,7 +70,7 @@ export class BookingsService {
   }
 
   cancelBooking(bookingId: string) {
-    return this.http.delete(`https://ionic-booking-app-b44d7.firebaseio.com/bookings.json/${bookingId}.json`)
+    return this.http.delete(`https://ionic-booking-app-b44d7.firebaseio.com/bookings/${bookingId}.json`)
     .pipe(
       switchMap(() => {
         return this.bookings;

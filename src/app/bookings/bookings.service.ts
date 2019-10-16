@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { Bookings } from './bookings.model';
 import { BehaviorSubject } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
-import { take, map, tap, delay } from 'rxjs/operators';
+import { take, map, tap, delay, switchMap } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,7 @@ export class BookingsService {
     return this._bookings.asObservable();
   }
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private http: HttpClient) { }
 
   addBooking(
     placeId: string,
@@ -27,7 +28,7 @@ export class BookingsService {
     dateFrom: Date,
     dateTo: Date,
   ) {
-    console.log();
+    let generatedId: string;
     const newBooking = new Bookings(
       'p' + Math.floor(Math.random() * 110).toString(),
       placeId,
@@ -41,9 +42,19 @@ export class BookingsService {
       dateTo
     );
 
-    return this._bookings.pipe(take(1), delay(2000), tap(places => {
-      this._bookings.next(places.concat(newBooking));
-    }));
+    return this.http
+    .post<{name: string}>('https://ionic-booking-app-b44d7.firebaseio.com/bookings.json', { ...newBooking, id: null })
+    .pipe(
+      switchMap(resData => {
+        generatedId = resData.name;
+        return this.bookings;
+      }),
+      take(1),
+      tap(bookings => {
+        newBooking.id = generatedId;
+        this._bookings.next(bookings.concat(newBooking));
+      })
+    );
   }
 
   cancelBooking(bookingId: string) {

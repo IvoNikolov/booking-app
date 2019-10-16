@@ -1,6 +1,6 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { NavController, ModalController, ActionSheetController, LoadingController } from '@ionic/angular';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit, OnDestroy, ErrorHandler } from '@angular/core';
+import { NavController, ModalController, ActionSheetController, LoadingController, AlertController } from '@ionic/angular';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PlacesService } from '../../places.service';
 import { Place } from '../../places.model';
 import { CreateBookingComponent } from 'src/app/bookings/create-booking/create-booking.component';
@@ -14,6 +14,11 @@ import { AuthService } from 'src/app/auth/auth.service';
   styleUrls: ['./place-detail.page.scss']
 })
 export class PlaceDetailPage implements OnInit, OnDestroy {
+  place: Place;
+  isBookable = false;
+  isLoading = false;
+  private placesSub: Subscription;
+
   constructor(
     private route: ActivatedRoute,
     private navCtrl: NavController,
@@ -22,11 +27,11 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
     private actionSheetCtrl: ActionSheetController,
     private bookingService: BookingsService,
     private loadingCtrl: LoadingController,
-    private authService: AuthService
+    private authService: AuthService,
+    private alertCtrl: AlertController,
+    private router: Router
   ) {}
-  place: Place;
-  isBookable = false;
-  private placesSub: Subscription;
+
 
   ngOnInit() {
     this.route.paramMap.subscribe(paramMap => {
@@ -34,11 +39,30 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
         this.navCtrl.navigateBack('/places/tabs/discover');
         return;
       }
+      this.isLoading = true;
       const placeId = paramMap.get('placeId');
-      this.placesSub = this.placeService.getPlace(placeId).subscribe(place => {
-        this.place = place;
-        this.isBookable = place.userId !== this.authService.userId;
-      });
+      this.placesSub = this.placeService
+        .getPlace(placeId)
+        .subscribe(place => {
+          this.place = place;
+          this.isBookable = place.userId !== this.authService.userId;
+          this.isLoading = false;
+        }, error => {
+          this.alertCtrl.create({
+            header: 'Alert',
+            message: 'Could not fetch data!',
+            buttons: [
+              {
+                text: 'Ok',
+                handler: () => {
+                  this.router.navigate(['/places/tabs/discober']);
+                }
+              }
+            ]
+          }).then(alertEl => {
+            alertEl.present();
+          });
+        });
     });
   }
 

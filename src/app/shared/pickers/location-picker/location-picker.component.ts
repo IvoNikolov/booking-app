@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output  } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { MapModalComponent } from '../../map-modal/map-modal.component';
 import { HttpClient } from '@angular/common/http';
@@ -13,6 +13,10 @@ import { of } from 'rxjs';
   styleUrls: ['./location-picker.component.scss'],
 })
 export class LocationPickerComponent implements OnInit {
+
+  selectedLocationImage: string;
+  isLoading = false;
+  @Output() locationPick = new EventEmitter<PlaceLocation>();
 
   constructor(private modalCtrl: ModalController, private http: HttpClient) { }
 
@@ -30,11 +34,13 @@ export class LocationPickerComponent implements OnInit {
         }
 
         const pickedLocation: PlaceLocation = {
-          lat: modalData.data.lata,
+          lat: modalData.data.lat,
           lng: modalData.data.lng,
           address: null,
           staticMapImageURL: null,
         };
+
+        this.isLoading = true;
 
         this.getAddress(modalData.data.lat, modalData.data.lng).pipe(switchMap(address => {
           pickedLocation.address = address;
@@ -42,6 +48,9 @@ export class LocationPickerComponent implements OnInit {
         })
         ).subscribe(staticMapImageURL => {
           pickedLocation.staticMapImageURL = staticMapImageURL;
+          this.selectedLocationImage = staticMapImageURL;
+          this.isLoading = false;
+          this.locationPick.emit(pickedLocation);
         });
       });
       modalEl.present();
@@ -60,8 +69,8 @@ export class LocationPickerComponent implements OnInit {
   }
 
   private getMapImage(lat: number, lng: number, zoom: number) {
-    return `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=${zoom}&size=500x300&maptype=roadmap
-    &markers=color:red%7Clabel:Place%7C${lat},${lng}
-    &key=${environment.googleMapsAPIkey}`;
+      return `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=${zoom}&size=500x300&maptype=roadmap
+      &markers=color:red%7Clabel:Place%7C${lat},${lng}
+      &key=${environment.googleMapsAPIkey}`;
   }
 }

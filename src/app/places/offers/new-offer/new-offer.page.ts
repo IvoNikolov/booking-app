@@ -32,7 +32,7 @@ export class NewOfferPage implements OnInit {
 
   onCreateOffer() {
 
-    if (!this.form.valid) {
+    if (!this.form.valid || !this.form.get('image').value) {
       return;
     }
     this.loadingCtrl.create({message: 'Creating place...'}).then(loadingEl => {
@@ -50,6 +50,10 @@ export class NewOfferPage implements OnInit {
         this.router.navigate(['/places/tabs/offers']);
       });
     });
+  }
+
+  onImagePicked(imageData: string) {
+    
   }
 
 }

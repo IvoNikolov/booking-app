@@ -3,6 +3,6 @@
   <ion-img role="button" class="location-image" (click)="onPickLocation()" [src]="selectedLocationImage" *ngIf="selectedLocationImage && !isLoading"></ion-img>
   <ion-button color="primary" (click)="onPickLocation()"  *ngIf="!selectedLocationImage  && !isLoading">
     <ion-icon name="map" slot="start"></ion-icon>
-    <ion-label></ion-label>
-    Select Location</ion-button>
+    <ion-label>Select Location</ion-label>
+  </ion-button>
 </div>

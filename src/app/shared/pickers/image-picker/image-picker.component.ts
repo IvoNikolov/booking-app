@@ -9,7 +9,7 @@ import { Platform } from '@ionic/angular';
 })
 export class ImagePickerComponent implements OnInit {
   @ViewChild('filepicker', { static: false }) filePickerRef: ElementRef<HTMLInputElement>;
-  @Output() imagePick = new EventEmitter<string>();
+  @Output() imagePick = new EventEmitter<string | File>();
   selectedImage: string;
   usePicker = false;
 
@@ -44,7 +44,18 @@ export class ImagePickerComponent implements OnInit {
   }
 
   onFileChosen(event: Event) {
-    console.log(event);
+    const pickedFile = (event.target as HTMLInputElement).files[0];
+    if (!pickedFile) {
+      return;
+    }
+
+    const fr = new FileReader();
+    fr.onload = () => {
+      const dataUrl = fr.result.toString();
+      this.selectedImage = dataUrl;
+      this.imagePick.emit(pickedFile);
+    };
+    fr.readAsDataURL(pickedFile);
   }
 
 }

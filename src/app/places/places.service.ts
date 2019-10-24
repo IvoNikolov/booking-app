@@ -110,13 +110,24 @@ export class PlacesService {
       );
   }
 
-  addPlace(title: string, description: string, price: number, availableFrom: Date, availableTo: Date, location: PlaceLocation) {
+  uploadImage(image: File) {
+    const uploadData = new FormData();
+    uploadData.append('image', image);
+
+    return this.http.post<{imageUrl: string, imagePath: string}>(
+      'https://us-central1-ionic-booking-app-b44d7.cloudfunctions.net/storeImage',
+      uploadData
+    );
+  }
+
+  addPlace(title: string, description: string, price: number,
+           availableFrom: Date, availableTo: Date, location: PlaceLocation, imageUrl: string) {
     let generatedId: string;
     const newPlace = new Place(
         'p' + Math.floor(Math.random() * 110).toString(),
         title,
         description,
-        'https://www.freeiconspng.com/uploads/no-image-icon-11.PNG',
+        imageUrl,
         price,
         availableFrom,
         availableTo,

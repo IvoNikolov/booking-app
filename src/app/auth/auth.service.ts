@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +18,17 @@ export class AuthService {
     return this._userId;
   }
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
+
+  signup(email: string, password: string) {
+    return this.http.post(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${
+      environment.firebaseAPIkey
+    }`, {
+      email,
+      password,
+      returnSecureToken: true
+    }).subscribe();
+  }
 
   login() {
     this._userIsAuthentucated = true;

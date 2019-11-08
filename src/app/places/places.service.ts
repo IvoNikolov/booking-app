@@ -123,7 +123,13 @@ export class PlacesService {
   addPlace(title: string, description: string, price: number,
            availableFrom: Date, availableTo: Date, location: PlaceLocation, imageUrl: string) {
     let generatedId: string;
-    const newPlace = new Place(
+    let newPlace: Place;
+    return this.authService.userId.pipe(take(1), switchMap(userId => {
+      if (!userId) {
+        throw new Error('No user found');
+      }
+
+      newPlace = new Place(
         'p' + Math.floor(Math.random() * 110).toString(),
         title,
         description,
@@ -131,14 +137,14 @@ export class PlacesService {
         price,
         availableFrom,
         availableTo,
-        this.authService.userId,
+        userId,
         location
       );
 
-    return this.http
-      .post<{name: string}>('https://ionic-booking-app-b44d7.firebaseio.com/offered-places.json', { ...newPlace, id: null })
-      .pipe(
-        switchMap(resData => {
+      return this.http.post<{name: string}>('https://ionic-booking-app-b44d7.firebaseio.com/offered-places.json', {
+        ...newPlace, id: null
+      });
+    }), switchMap(resData => {
           generatedId = resData.name;
           return this.places;
         }),

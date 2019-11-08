@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { BookingsService } from './bookings.service';
+import { BookingService } from './bookings.service';
 import { Bookings } from './bookings.model';
 import { IonItemSliding, LoadingController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
@@ -15,7 +15,7 @@ export class BookingsPage implements OnInit, OnDestroy {
   isLoading = false;
   private bookingsSub: Subscription;
 
-  constructor(private bookingService: BookingsService, private loadingCtrl: LoadingController) { }
+  constructor(private bookingService: BookingService, private loadingCtrl: LoadingController) { }
 
   ngOnInit() {
     this.bookingsSub = this.bookingService.bookings.subscribe(bookings => {
@@ -25,7 +25,7 @@ export class BookingsPage implements OnInit, OnDestroy {
 
   ionViewWillEnter() {
     this.isLoading = true;
-    this.bookingService.fetchBooking().subscribe(bookings => {
+    this.bookingService.fetchBookings().subscribe(bookings => {
       this.loadedBookings = bookings;
       this.isLoading = false;
     });

@@ -22,7 +22,7 @@ export class AuthPage implements OnInit {
   }
 
   authenticate(email: string, password: string) {
-    this.authService.login();
+    this.authService.login(email, password);
     this.loaderCtrl.create({keyboardClose: true, message: 'Logging in...'}).then(loadingEl => {
       loadingEl.present();
 

@@ -5,6 +5,7 @@ const os = require('os');
 const path = require('path');
 const fs = require('fs');
 const uuid = require('uuid/v4');
+const fbAdmin = require('firebase-admin');
 
 const { Storage } = require('@google-cloud/storage');
 
@@ -12,11 +13,21 @@ const storage = new Storage({
   projectId: 'ionic-booking-app-b44d7'
 });
 
+fbAdmin.initializeApp({credential: fbAdmin.credential.cert(require('./ionic-token-key.json'))});
+
 exports.storeImage = functions.https.onRequest((req, res) => {
   return cors(req, res, () => {
     if (req.method !== 'POST') {
       return res.status(500).json({ message: 'Not allowed.' });
     }
+
+    if (!req.header.authorization || !req.header.authorization.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Unauthorized!'});
+    }
+
+    let idToken;
+    idToken =  req.header.authorization.split('Bearer ')[1];
+
     const busboy = new Busboy({ headers: req.headers });
     let uploadData;
     let oldImagePath;
@@ -38,36 +49,38 @@ exports.storeImage = functions.https.onRequest((req, res) => {
         imagePath = oldImagePath;
       }
 
-      console.log(uploadData.type);
-      return storage
-        .bucket('ionic-booking-app-b44d7.appspot.com')
-        .upload(uploadData.filePath, {
-          uploadType: 'media',
-          destination: imagePath,
-          metadata: {
+      return fbAdmin.auth().verifyIdToken(idToken).then(decodenToken => {
+        console.log(uploadData.type);
+        return storage
+          .bucket('ionic-booking-app-b44d7.appspot.com')
+          .upload(uploadData.filePath, {
+            uploadType: 'media',
+            destination: imagePath,
             metadata: {
-              contentType: uploadData.type,
-              firebaseStorageDownloadTokens: id
+              metadata: {
+                contentType: uploadData.type,
+                firebaseStorageDownloadTokens: id
+              }
             }
-          }
-        })
-
-        .then(() => {
-          return res.status(201).json({
-            imageUrl:
-              'https://firebasestorage.googleapis.com/v0/b/' +
-              storage.bucket('ionic-booking-app-b44d7.appspot.com').name +
-              '/o/' +
-              encodeURIComponent(imagePath) +
-              '?alt=media&token=' +
-              id,
-            imagePath: imagePath
-          });
-        })
-        .catch(error => {
-          console.log(error);
-          return res.status(401).json({ error: 'Unauthorized!' });
+          })
+  
+      })
+      .then(() => {
+        return res.status(201).json({
+          imageUrl:
+            'https://firebasestorage.googleapis.com/v0/b/' +
+            storage.bucket('ionic-booking-app-b44d7.appspot.com').name +
+            '/o/' +
+            encodeURIComponent(imagePath) +
+            '?alt=media&token=' +
+            id,
+          imagePath: imagePath
         });
+      })
+      .catch(error => {
+        console.log(error);
+        return res.status(401).json({ error: 'Unauthorized!' });
+      });
     });
     return busboy.end(req.rawBody);
   });

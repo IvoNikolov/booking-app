@@ -62,9 +62,10 @@ export class PlacesService {
   constructor(private authService: AuthService, private http: HttpClient) { }
 
   fetchPlaces() {
-    return this.http
-      .get<{[key: string]: PlaceData}>('https://ionic-booking-app-b44d7.firebaseio.com/offered-places.json')
-      .pipe(
+    return this.authService.token.pipe(take(1), switchMap(token => {
+      return this.http
+      .get<{[key: string]: PlaceData}>(`https://ionic-booking-app-b44d7.firebaseio.com/offered-places.json?auth=${token}`);
+    }),
         map(resData => {
           const places = [];
           for (const key in resData) {
@@ -91,9 +92,10 @@ export class PlacesService {
   }
 
   getPlace(id: string) {
-    return this.http
-      .get<PlaceData>(`https://ionic-booking-app-b44d7.firebaseio.com/offered-places/${id}.json`)
-      .pipe(
+    return this.authService.token.pipe(take(1), switchMap(token => {
+      return this.http
+      .get<PlaceData>(`https://ionic-booking-app-b44d7.firebaseio.com/offered-places/${id}.json?auth=${token}`);
+    }),
         map(placeData => {
               return new Place(
                 id,
@@ -114,18 +116,24 @@ export class PlacesService {
     const uploadData = new FormData();
     uploadData.append('image', image);
 
-    return this.http.post<{imageUrl: string, imagePath: string}>(
-      'https://us-central1-ionic-booking-app-b44d7.cloudfunctions.net/storeImage',
-      uploadData
-    );
+    return this.authService.token.pipe(take(1), switchMap(token => {
+      return this.http.post<{imageUrl: string, imagePath: string}>(
+        'https://us-central1-ionic-booking-app-b44d7.cloudfunctions.net/storeImage',
+        uploadData, {headers: {Authorization:  'Bearer ' + token }}
+      );
+    }));
   }
 
   addPlace(title: string, description: string, price: number,
            availableFrom: Date, availableTo: Date, location: PlaceLocation, imageUrl: string) {
     let generatedId: string;
+    let fetchedUserId: string;
     let newPlace: Place;
     return this.authService.userId.pipe(take(1), switchMap(userId => {
-      if (!userId) {
+      fetchedUserId = userId;
+      return this.authService.token;
+    }), take(1), switchMap(token => {
+      if (!token) {
         throw new Error('No user found');
       }
 

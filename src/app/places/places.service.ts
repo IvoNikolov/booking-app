@@ -133,7 +133,7 @@ export class PlacesService {
       fetchedUserId = userId;
       return this.authService.token;
     }), take(1), switchMap(token => {
-      if (!token) {
+      if (!fetchedUserId) {
         throw new Error('No user found');
       }
 
@@ -145,11 +145,11 @@ export class PlacesService {
         price,
         availableFrom,
         availableTo,
-        userId,
+        fetchedUserId,
         location
       );
 
-      return this.http.post<{name: string}>('https://ionic-booking-app-b44d7.firebaseio.com/offered-places.json', {
+      return this.http.post<{name: string}>(`https://ionic-booking-app-b44d7.firebaseio.com/offered-places.json?auth=${token}`, {
         ...newPlace, id: null
       });
     }), switchMap(resData => {
@@ -167,9 +167,12 @@ export class PlacesService {
   updatePlace(placeId: string, title: string, description: string) {
 
     let updatedPlaces: Place[];
+    let fetchedToken: string;
 
-    return this.places
-    .pipe(
+    return this.authService.token.pipe(take(1), switchMap(token => {
+      fetchedToken = token;
+      return this.places;
+    }),
       take(1),
       switchMap(places => {
         if (!places || places.length <= 0) {
@@ -193,7 +196,7 @@ export class PlacesService {
           oldPlace.location
         );
         return this.http
-          .put(`https://ionic-booking-app-b44d7.firebaseio.com/offered-places/${placeId}.json`,
+          .put(`https://ionic-booking-app-b44d7.firebaseio.com/offered-places/${placeId}.json?auth=${fetchedToken}`,
             {...updatedPlaces[updatedPlaceIndex], id: null}
           );
       }),

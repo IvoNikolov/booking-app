@@ -65,7 +65,7 @@ export class BookingService {
           dateTo
         );
         return this.http.post<{ name: string }>(
-          `https://ionic-angular-course.firebaseio.com/bookings.json?auth=${token}`,
+          `https://ionic-angular-course.firebaseio.com/bookings.json`,
           { ...newBooking, id: null }
         );
       }),
@@ -85,7 +85,7 @@ export class BookingService {
     return this.authService.token.pipe(take(1), switchMap(token => {
       return this.http
       .delete(
-        `https://ionic-angular-course.firebaseio.com/bookings/${bookingId}.json?auth=${token}`
+        `https://ionic-angular-course.firebaseio.com/bookings/${bookingId}.json`
       );
     }),
       switchMap(() => {
@@ -100,7 +100,7 @@ export class BookingService {
 
   fetchBookings() {
     let fetchedUserId: string;
-    return this.authService.token.pipe(take(1), switchMap(token => { 
+    return this.authService.token.pipe(take(1), switchMap(token => {
       return this.authService.userId.pipe(take(1), switchMap(userId => {
         if (!userId) {
           throw new Error('User not found');
@@ -112,9 +112,7 @@ export class BookingService {
     switchMap( token => {
       return this.http
       .get<{ [key: string]: BookingData }>(
-        `https://ionic-angular-course.firebaseio.com/bookings.json?orderBy="userId"&equalTo="${
-          this.authService.userId
-        }"`
+        `https://ionic-angular-course.firebaseio.com/bookings.json"`
       );
     }),
         map(bookingData => {

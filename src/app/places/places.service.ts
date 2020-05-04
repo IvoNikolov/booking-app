@@ -64,7 +64,7 @@ export class PlacesService {
   fetchPlaces() {
     return this.authService.token.pipe(take(1), switchMap(token => {
       return this.http
-      .get<{[key: string]: PlaceData}>(`https://ionic-booking-app-b44d7.firebaseio.com/offered-places.json?auth=${token}`);
+      .get<{[key: string]: PlaceData}>(`https://ionic-booking-app-b44d7.firebaseio.com/offered-places.json`);
     }),
         map(resData => {
           const places = [];
@@ -149,7 +149,7 @@ export class PlacesService {
         location
       );
 
-      return this.http.post<{name: string}>(`https://ionic-booking-app-b44d7.firebaseio.com/offered-places.json?auth=${token}`, {
+      return this.http.post<{name: string}>(`https://ionic-booking-app-b44d7.firebaseio.com/offered-places.json`, {
         ...newPlace, id: null
       });
     }), switchMap(resData => {
@@ -196,7 +196,7 @@ export class PlacesService {
           oldPlace.location
         );
         return this.http
-          .put(`https://ionic-booking-app-b44d7.firebaseio.com/offered-places/${placeId}.json?auth=${fetchedToken}`,
+          .put(`https://ionic-booking-app-b44d7.firebaseio.com/offered-places/${placeId}.json`,
             {...updatedPlaces[updatedPlaceIndex], id: null}
           );
       }),
